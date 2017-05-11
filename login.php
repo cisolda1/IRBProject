@@ -1,6 +1,6 @@
 <?php
 /* login.php
-* Last Modified: 3/16/2017
+* Last Modified: 5/1/2017
 */
 
     //Require session.php which starts the session and requires CreateDB.php
@@ -14,36 +14,45 @@
     //An empty string to print login errors.
     $loginErr = "";
     
-    //If the user entered information the verify if the email/pass is available.
+    //If the user entered information the verify if the username/password is available.
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		if (empty($_POST['email']) || empty($_POST['pass']))
-				$loginErr = "email and/or pass are empty, please update.";	
+		if (empty($_POST['email']) || empty($_POST['password']))
+				$loginErr = "Username and/or Password are empty, please update.";	
 		else {	
-				//Store $email and $pass	
+				//Store $email and $password	
 				$email = $_POST['email'];	
-				$pass = $_POST['pass'];
+				$password = $_POST['password'];
 			
 				//SQL query to collect user information if it exists.	
-				$sql = "SELECT * FROM User WHERE pass=pass('$pass')
+				$sql = "SELECT * FROM User WHERE password=password('$password')
 				                            AND email = '$email'";	
 				$query = mysqli_query($conn, $sql);	
 
                 //Check if user exists.	
 				if(mysqli_num_rows($query) === 1) {
 				        $row = mysqli_fetch_assoc($query);
-				        //Storing email
+				        //Storing username
 						$_SESSION['login_user'] = $row['email'];
 						//Sends user to profile.php
 						header("location: profile.php");	
 				} else {
 				        //user does not exist.
-						$loginErr = "Invalid email and/or pass.";	
+						$loginErr = "Invalid Username and/or Password.";	
 				}	
 		}	
     }
 ?>	
-<html lang="en">
-  <head>
+<html>	
+    <!--Form for the user to log in. The information is sent to itself, index.php.-->
+    <title>Marist IRB</title>
+    <body>	
+        <h1>Marist IRB</h1>
+        <br>
+        <br>
+        <form action="login.php" method="post">
+        <!--Print errors if there are any.--> 
+        <?php echo $loginErr; ?>
+         <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -94,18 +103,17 @@
 	<!-- *****************************************************************************************************************
 	 Mission Statement
 	 ***************************************************************************************************************** -->
-	  <br/><br/><br/><br/><br/><br/><br/>v
+	  <br/><br/><br/><br/><br/><br/><br/>
 	  
 	  <div class="login-card">
     <h1>Login</h1><br>
-  <form>
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="pass" placeholder="pass" required>
-    <input type="submit" name="login" class="login login-submit" value="Login">
-  </form>
+    <input type="email" name="email" placeholder="example@email.com" required>
+    <input type="password" name="password" placeholder="********" required>
+    <input type="submit" name="login" class="login login-submit" value="login">
+  
     
   <div class="login-help">
-    <a href="register.html">Register</a> • <a href="#">Forgot pass</a>
+    <a href="register.html">Register</a> • <a href="#">Forgot password</a>
   </div>
 </div>
 
@@ -162,4 +170,7 @@
   	<script src="assets/js/jquery.isotope.min.js"></script>
   	<script src="assets/js/custom.js"></script>
   </body>
+  </body>
+        </form>	
+    </body>	
 </html>
